@@ -1,0 +1,58 @@
+Draghici Maria-Ana, 332CA
+
+    Clasa ManageFiles:
+    Am folosit o clasa pentru gestionarea fisierelor, pentru a putea fi
+    accesate de toate instantele programului. Pentru o structura mai logica,
+    aici se afla si functia de calculare a dimensiunii unui fisier in bytes.
+
+    Clasa Tema2:
+    Aceasta este clasa ce contine main-ul. Aici se citeste inputul, se afla
+    numele fisierelor de citire si se creeaza fisierele de iesire care,
+    ulterior, sunt salvate in instanta manage (de tip ManageFiles).
+
+    Clasa OrderTask:
+    Este pentru thread-uri de nivel 1.
+
+    Clasa ProductTask:
+    Clasa pentru thread-uri de nivel 2.
+
+    Flow-ul Programului:
+    Se afla fisierele de citire si scriere; se creeaza o coada
+    pentru task-uri si un executor service de maxim P workeri.
+
+    Fisierul orders.txt este impartit in chunkuri de bytes asignate
+    fiecarui dintre cele P thread-uri de nivel 1 astfel:
+    1. Este aflata dimensiunea fisierului in bytes.
+    2. Este impartia dimensiunea la numarul P de threaduri de nivel 1
+    si se salveaza in chunk
+    3. Daca valoarea lui chunk nu este intreaga se aproximeaza
+    prin lipsa pentru valoare limitei inferioare (start) si pentru
+    limita superioara(stop) se adauga la start chunk-ul de bytes
+    perimsi de citire, iar apoi este aproximat prin lipsa.
+    4. limita de citire va fi, apoi, stop - start + 1 (intervalul
+    dintre start si stop).
+
+    Threadurile de nivel 1 folosesc acelasi reader pentru a citi
+    comenzile.
+    Un thread se foloseste de reader pentru a citi o linie din orders.txt.
+    Apoi, scade din limita de bytes cititi numarul de bytes ai liniei citite.
+    Verifica daca numarul de produse din comanda citita este mai mare decat
+    0, iar daca este, adauga comanda ca task in task pool pentru a fi
+    procesata de thread-ruile de nivel 2. De asemenea,
+    incrementeaza numarul de bytes cititi per total pentru a gestiona
+    oprirea task pool-ului.
+    Astfel, un thread de nivel 2(worker) preia un task din task-pool,
+    verifica numarul de produse din comanda respectiva si incepe sa
+    caute in fisierul order_products.txt. De fiecare data cand
+    gaseste un produs din comanda respectiva, scrie in fisierul
+    order_products_out.txt ca produsul a fost livrat. In momentul
+    in care a gasit toate produsele din comanda respectiva,
+    scrie in buffer valoarea 1, ceea ce il anunta pe threadul de nivel
+    1 ce i-a asignat comanda ca toate produsele au fost livrate,
+    deci acesta poate scrie comanda ca livrata in orders_out.txt.
+    Odata ce numarul de bytes cititi per total este egal cu numarul
+    de bytes din fisierul orders.txt, task pool-ul va fi inchis, intrucat
+    inseamna ca toate comenzile au trecut pe la threadurile de nivel 2,
+    iar produsele marcate ca si livrate.
+    De asemenea, odata ce toate comenzile din orders.txt au fost citite
+    (si implicit procesate), se inchid si threadurile de nivel 1 (join).

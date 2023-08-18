@@ -1,0 +1,24 @@
+Draghici Maria-Ana, 332CA
+
+BONUS - README
+
+    Fisierul orders.txt este impartit in chunkuri de bytes asignate
+    fiecarui dintre cele P thread-uri de nivel 1 astfel:
+    1. Este aflata dimensiunea fisierului in bytes.
+    2. Este impartia dimensiunea la numarul P de threaduri de nivel 1
+    si se salveaza in chunk
+    3. Daca valoarea lui chunk nu este intreaga se aproximeaza
+    prin lipsa pentru valoare limitei inferioare (start) si pentru
+    limita superioara(stop) se adauga la start chunk-ul de bytes
+    perimsi de citire.
+    4. limita de citire va fi, apoi, stop - start + 1 (intervalul
+    dintre start si stop)
+
+    Astfel, fiecare thread va citi un anumit numar de linii
+    din orders.txt, respectand limita de bytes asignata.
+    Folosind acelasi reader, citirile nu se vor suprapune,
+    intrucat mereu threadurile citesc in continuare, de unde
+    nu s-a mai citit. Threaduile citesc paralelizat, cate o linie,
+    verificand de fiecare data daca limita de bytes impusa este
+    respectata. Aceasta limita este impartita egal threaduri pentru
+    o citire eficienta.
